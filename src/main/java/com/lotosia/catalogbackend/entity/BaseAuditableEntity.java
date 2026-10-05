@@ -1,4 +1,4 @@
-package com.lotosia.catalogbackend.model.entity;
+package com.lotosia.catalogbackend.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;

@@ -1,4 +1,4 @@
-package com.lotosia.catalogbackend.model.entity;
+package com.lotosia.catalogbackend.entity;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
