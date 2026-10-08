@@ -2,7 +2,7 @@ package com.lotosia.catalog.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonValue;
-import org.apache.kafka.common.requests.ApiError;
+import com.lotosia.catalog.dto.ApiError;
 
 import java.util.Map;
 
