@@ -1,4 +1,4 @@
-package com.lotosia.catalogbackend.entity;
+package com.lotosia.catalogbackend.dto;
 
 import jakarta.persistence.Basic;
 import lombok.Builder;

@@ -1,4 +1,4 @@
-package com.lotosia.catalogbackend.dto;
+package com.lotosia.catalogbackend.dto.response;
 
 import lombok.Builder;
 
