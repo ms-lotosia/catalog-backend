@@ -15,11 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * Public (unauthenticated) category endpoints.
- * Used by the storefront to render category navigation and category pages.
- *
  * @author: nijataghayev
  */
+
 @Tag(name = "Categories (Public)", description = "Public read-only category endpoints")
 @RestController
 @RequestMapping("/api/v1/public/categories")

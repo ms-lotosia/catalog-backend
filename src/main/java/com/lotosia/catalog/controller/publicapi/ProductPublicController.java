@@ -21,10 +21,9 @@ import java.math.BigDecimal;
 import java.util.List;
 
 /**
- * Public (unauthenticated) product endpoints for the storefront.
- *
  * @author: nijataghayev
  */
+
 @Tag(name = "Products (Public)", description = "Public product listing, filtering and detail endpoints")
 @RestController
 @RequestMapping("/api/v1/public/products")
