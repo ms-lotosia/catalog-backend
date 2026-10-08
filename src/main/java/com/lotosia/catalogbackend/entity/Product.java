@@ -1,17 +1,21 @@
 package com.lotosia.catalogbackend.entity;
 
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,6 +26,8 @@ import java.util.List;
 @Table(name = "products")
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Product extends BaseAuditableEntity {
 
     @Column(nullable = false, unique = true, length = 64, updatable = false)
@@ -36,12 +42,14 @@ public class Product extends BaseAuditableEntity {
     @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal price;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @Column(nullable = false)
+    private boolean active = true;
+
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @ElementCollection
-    @CollectionTable(name = "pruct_images", joinColumns = @JoinColumn(name = "product_id"))
-    @Column(name = "image_url")
-    private List<String> images;
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("position ASC")
+    private List<ProductImage> images = new ArrayList<>();
 }
