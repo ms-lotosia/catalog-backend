@@ -1,5 +1,6 @@
 package com.lotosia.catalog.service;
 
+import com.lotosia.catalog.dto.request.AdminProductFilterRequest;
 import com.lotosia.catalog.dto.request.ProductFilterRequest;
 import com.lotosia.catalog.dto.request.ProductRequest;
 import com.lotosia.catalog.dto.request.ProductUpdateRequest;
@@ -15,6 +16,8 @@ import java.util.List;
 
 public interface ProductService {
 
+    // ─── Public API ─────────────────────────────────────────────────────────
+
     Page<ProductResponse> filterProducts(ProductFilterRequest request);
 
     ProductDetailResponse getProductById(Long id);
@@ -22,6 +25,12 @@ public interface ProductService {
     List<ProductResponse> getLatestProducts(int limit);
 
     List<ProductResponse> getForYouProducts(int limit);
+
+    // ─── Admin API ──────────────────────────────────────────────────────────
+
+    Page<ProductResponse> filterProductsAdmin(AdminProductFilterRequest request);
+
+    ProductDetailResponse getProductByIdAdmin(Long id);
 
     ProductResponse createProduct(ProductRequest request);
 

@@ -1,6 +1,7 @@
 package com.lotosia.catalog.service.impl;
 
 import com.lotosia.catalog.dto.MainImage;
+import com.lotosia.catalog.dto.request.AdminProductFilterRequest;
 import com.lotosia.catalog.dto.request.ProductFilterRequest;
 import com.lotosia.catalog.dto.request.ProductRequest;
 import com.lotosia.catalog.dto.request.ProductUpdateRequest;
@@ -10,6 +11,7 @@ import com.lotosia.catalog.dto.response.ProductResponse;
 import com.lotosia.catalog.entity.Category;
 import com.lotosia.catalog.entity.Product;
 import com.lotosia.catalog.entity.ProductImage;
+import com.lotosia.catalog.enums.ProductSortType;
 import com.lotosia.catalog.exception.CategoryNotFoundException;
 import com.lotosia.catalog.exception.ConflictException;
 import com.lotosia.catalog.exception.ResourceNotFoundException;
@@ -18,7 +20,6 @@ import com.lotosia.catalog.repository.ProductImageRepository;
 import com.lotosia.catalog.repository.ProductRepository;
 import com.lotosia.catalog.service.ProductService;
 import com.lotosia.catalog.specification.ProductSpecification;
-import com.lotosia.catalog.enums.ProductSortType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -47,6 +48,8 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final ProductImageRepository productImageRepository;
     private final CategoryRepository categoryRepository;
+
+    // ─── Public API ─────────────────────────────────────────────────────────
 
     @Override
     public Page<ProductResponse> filterProducts(ProductFilterRequest filter) {
@@ -102,6 +105,32 @@ public class ProductServiceImpl implements ProductService {
         return products.stream()
                 .map(p -> toProductResponse(p, mainImages.get(p.getId())))
                 .toList();
+    }
+
+    // ─── Admin API ──────────────────────────────────────────────────────────
+
+    @Override
+    public Page<ProductResponse> filterProductsAdmin(AdminProductFilterRequest filter) {
+        Specification<Product> spec = ProductSpecification.fromAdmin(filter);
+        Pageable pageable = PageRequest.of(filter.page(), filter.size(), resolveSort(filter.sortBy()));
+
+        Page<Product> page = productRepository.findAll(spec, pageable);
+
+        Set<Long> ids = page.stream().map(Product::getId).collect(Collectors.toSet());
+        Map<Long, String> mainImages = ids.isEmpty()
+                ? Map.of()
+                : productImageRepository.findMainImages(ids)
+                        .stream()
+                        .collect(Collectors.toMap(MainImage::productId, MainImage::url, (a, b) -> a));
+
+        return page.map(p -> toProductResponse(p, mainImages.get(p.getId())));
+    }
+
+    @Override
+    public ProductDetailResponse getProductByIdAdmin(Long id) {
+        Product product = productRepository.findWithDetailsById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
+        return toDetailResponse(product);
     }
 
     @Override
@@ -160,6 +189,8 @@ public class ProductServiceImpl implements ProductService {
         productRepository.deleteById(id);
         log.info("Product deleted: id={}", id);
     }
+
+    // ─── Helpers ────────────────────────────────────────────────────────────
 
     private Sort resolveSort(ProductSortType sortType) {
         return switch (sortType) {
